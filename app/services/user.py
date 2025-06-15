@@ -1,7 +1,9 @@
-from database.mongo import db
-from app.config import USER_COLLECTION
+from typing import List
+from database.mongo import user_collection
+from app.models.user import User
 
-user_collection = db[USER_COLLECTION] # type: ignore
+async def list_all_users() -> List[User]:
+  return await user_collection.find().to_list(100)
 
-def list_all_users():
-  return list(user_collection.find())
+async def get_user_by_id(id) -> User | None:
+  return await user_collection.find_one({id: id})
