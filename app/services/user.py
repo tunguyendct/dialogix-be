@@ -6,7 +6,7 @@ import datetime
 async def list_all_users() -> List[User]:
   return user_collection.find().to_list(100)
 
-async def get_user_by_id(id: User['_id']) -> User | None:
+async def get_user_by_id(id: str) -> User | None:
   return user_collection.find_one({'_id': id})
 
 async def create_user(user: UserRequest) -> User:

@@ -6,10 +6,10 @@ import datetime
 async def list_all_chats() -> List[Chat]:
   return chat_collection.find().to_list(100)
 
-async def list_chats_by_user(user_id: Chat['user_id']) -> List[Chat]:
+async def list_chats_by_user(user_id: str) -> List[Chat]:
   return chat_collection.find({"user_id": user_id}).to_list(100)
 
-async def get_chat_by_id(id: Chat['_id']) -> Chat | None:
+async def get_chat_by_id(id: str) -> Chat | None:
   return chat_collection.find_one({'_id': id})
 
 async def create_chat(chat: ChatRequest) -> Chat:
