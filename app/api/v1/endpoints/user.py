@@ -6,7 +6,7 @@ router = APIRouter()
 
 @router.get('/', status_code=status.HTTP_200_OK)
 async def list_users():
-  return list_all_users_service()
+  return await list_all_users_service()
   
 @router.get('/{id}', status_code=status.HTTP_200_OK)
 async def get_user_by_id(id: str):
@@ -18,7 +18,7 @@ async def get_user_by_id(id: str):
   user = get_user_by_id_service(id)
   if not user:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-  return get_user_by_id_service(id)
+  return await get_user_by_id_service(id)
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserRequest):
@@ -27,4 +27,4 @@ async def create_user(user: UserRequest):
   if len(user.name) < 1:
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User name must be at least 1 character long")
   
-  return create_user_service(user)
+  return await create_user_service(user)
