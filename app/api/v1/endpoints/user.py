@@ -1,14 +1,15 @@
 from fastapi import APIRouter, HTTPException, status
-from app.services.user import list_all_users as list_all_users_service, get_user_by_id as get_user_by_id_service, create_user as create_user_service
-from app.models.user import UserRequest
+from app.services.user import list_all_users, get_user_by_id as get_user_by_id_service, create_user as create_user_service
+from app.models.user import UserRequest, UserResponse
 
 router = APIRouter()
 
-@router.get('/', status_code=status.HTTP_200_OK)
+@router.get('/', status_code=status.HTTP_200_OK, response_model=list[UserResponse])
 async def list_users():
-  return await list_all_users_service()
-  
-@router.get('/{id}', status_code=status.HTTP_200_OK)
+  return await list_all_users()
+
+
+@router.get('/{id}', status_code=status.HTTP_200_OK, response_model=UserResponse)
 async def get_user_by_id(id: str):
   if not id:
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User ID is required")
@@ -19,6 +20,7 @@ async def get_user_by_id(id: str):
   if not user:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
   return await get_user_by_id_service(id)
+
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserRequest):
