@@ -6,7 +6,7 @@ class PyObjectId(ObjectId):
     yield cls.validate
 
   @classmethod
-  def validate(cls, v):
+  def validate(cls, v, field): # Add 'field' as a parameter
     if not ObjectId.is_valid(v):
       raise ValueError("Invalid ObjectId")
     return ObjectId(v)
