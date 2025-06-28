@@ -3,9 +3,11 @@ from typing import Optional
 from bson import ObjectId
 from app.models.base import PyObjectId
 
+
 class ChatRequest(BaseModel):
   user_id: PyObjectId 
   title: str = "New Chat"
+
 
 class Chat(BaseModel):
   id: Optional[PyObjectId] = Field(alias='_id')

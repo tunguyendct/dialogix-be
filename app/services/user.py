@@ -1,13 +1,16 @@
 from typing import List
 from database.mongo import user_collection
-from app.models.user import User, UserRequest, UserResponse
+from app.models.user import UserRequest, UserResponse
 import datetime
+
 
 async def list_all_users() -> List[UserResponse]:
   return user_collection.find().to_list(100)
 
+
 async def get_user_by_id(id: str) -> UserResponse | None:
   return user_collection.find_one({'_id': id})
+
 
 async def create_user(user: UserRequest) -> UserResponse:
   user_dict = user.model_dump()

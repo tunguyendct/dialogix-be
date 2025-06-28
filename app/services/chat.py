@@ -3,14 +3,18 @@ from app.models.chat import Chat, ChatRequest
 from typing import List
 import datetime
 
+
 async def list_all_chats() -> List[Chat]:
   return chat_collection.find().to_list(100)
+
 
 async def list_chats_by_user(user_id: str) -> List[Chat]:
   return chat_collection.find({"user_id": user_id}).to_list(100)
 
+
 async def get_chat_by_id(id: str) -> Chat | None:
   return chat_collection.find_one({'_id': id})
+
 
 async def create_chat(chat: ChatRequest) -> Chat:
   chat_dict = chat.model_dump()
