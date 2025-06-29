@@ -2,7 +2,7 @@ from typing import List
 from database.mongo import message_collection
 from app.models.message import Message, MessageRequest
 import datetime
-from core.openapi_client import generate_text_with_conversation
+from app.core.openapi_client import generate_text_with_conversation
 
 
 async def list_all_messages() -> List[Message]:
