@@ -1,8 +1,7 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import chat, user, message
+from app.api.v1.endpoints import mock, health
 
-router = APIRouter()
+api_router = APIRouter()
 
-router.include_router(chat.router, prefix='/chats', tags=['Chats'])
-router.include_router(user.router, prefix='/users', tags=['Users'])
-router.include_router(message.router, prefix='/messages', tags=['Messages'])
+api_router.include_router(mock.router)
+api_router.include_router(health.router)
