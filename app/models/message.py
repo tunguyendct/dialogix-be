@@ -1,17 +1,34 @@
-from pydantic import BaseModel, Field
-from typing import Literal, Optional
-from bson import ObjectId
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Optional
+from datetime import datetime
+from enum import Enum
 from app.models.base import PyObjectId 
+
+
+class Role(str, Enum):
+  USER = 'user'
+  ASSISTANT = 'assistant'
+
+
+class MessageRequest(BaseModel):
+  chat_id: PyObjectId # Foreign key to Chat._id
+  role: Role
+  content: str
+
 
 class Message(BaseModel):
   id: Optional[PyObjectId] = Field(alias='_id')
   chat_id: PyObjectId # Foreign key to Chat._id
-  role: Literal['user', 'assistant', 'system']
+  role: Role 
   content: str
-  created_at: Optional[str] = None
-  token_usage: Optional[int] = 0
-  feedback: Optional[Literal['like', 'dislike']] = None
+  created_at: datetime = Field(default_factory=datetime.now)
 
-  class Config:
-    arbitrary_types_allowed = True
-    json_encoders = {ObjectId: str}
+  model_config = ConfigDict(
+    populate_by_name=True,
+    arbitrary_types_allowed=True,
+    json_encoders={datetime: lambda dt: dt.isoformat()}
+  )
+
+  def __getitem__(self, key):
+    return getattr(self, key)
+  
