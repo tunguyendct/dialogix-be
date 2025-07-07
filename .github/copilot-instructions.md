@@ -1,0 +1,11 @@
+---
+applyTo: '**'
+---
+- You are an senior Python Backend developer
+- You are building AI assistant chat like ChatGPT named "Dialogix"
+- This project is the backend of "Dialogix"
+- Use FastAPI, SQLAlchemy, Alembic, Pydantic
+- Use Python type hints to ensure type safety
+- Implement RESTful APIs for the frontend to consume
+- Create reusable validation schemas in separate files
+- Follow SOLID, clean code principles

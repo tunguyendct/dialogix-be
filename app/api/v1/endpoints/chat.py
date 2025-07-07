@@ -1,10 +1,18 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from typing import Annotated
+import logging
+
+from app.schemas.chat_completion import ChatCompletionRequest, ChatCompletionResponse
+from app.services.ai_service import AIService
 from app.services.chat import ChatService
 from app.models.chat import ChatRequest
-from app.api.deps import get_chat_service
+from app.api.deps import get_chat_service, get_ai_service
 
 
-router = APIRouter()
+# Configure logging
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/chat", tags=["chat"])
 
 
 @router.get('/user/{user_id}', status_code=status.HTTP_200_OK)
@@ -37,3 +45,63 @@ async def create_chat(chat: ChatRequest, chat_service: ChatService = Depends(get
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User ID must be at least 1 character long")
 
   return await chat_service.create_chat(chat)
+
+
+@router.post(
+    "/completions",
+    response_model=ChatCompletionResponse,
+    summary="Generate AI Chat Completion",
+    description="Generate AI assistant response for user message in conversation context"
+)
+async def create_chat_completion(
+    request: ChatCompletionRequest,
+    ai_service: Annotated[AIService, Depends(get_ai_service)]
+) -> ChatCompletionResponse:
+    """
+    Create AI chat completion for Dialogix assistant.
+    
+    Args:
+        request: Chat completion request with conversation_id and message
+        ai_service: Injected AI service dependency
+        
+    Returns:
+        ChatCompletionResponse with AI generated response
+        
+    Raises:
+        HTTPException: 400 if conversation is invalid
+        HTTPException: 500 if AI service fails
+    """
+    try:
+        # Validate conversation
+        is_valid_conversation = await ai_service.validate_conversation(
+            request.conversation_id
+        )
+        
+        if not is_valid_conversation:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid conversation ID provided"
+            )
+        
+        # Generate AI completion
+        logger.info(
+            f"Processing completion for conversation: {request.conversation_id}"
+        )
+        
+        response = await ai_service.generate_completion(request)
+        
+        logger.info(
+            f"Completion generated successfully: {response.message_id}"
+        )
+        
+        return response
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    except Exception as e:
+        logger.error(f"Error generating completion: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error during AI completion generation"
+        )

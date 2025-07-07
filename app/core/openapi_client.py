@@ -12,9 +12,9 @@ class AzureOpenAIClient:
     self.development_name = AZURE_OPENAI_DEPLOYMENT_NAME
 
 
-  def generate_text_with_conversation(self, messages) -> str | None:
+  def generate_message_with_conversation(self, messages) -> str:
     response = self.client.chat.completions.create(
       model=self.development_name,
       messages=messages
     )
-    return response.choices[0].message.content
+    return response.choices[0].message.content or ''

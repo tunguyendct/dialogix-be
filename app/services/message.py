@@ -35,7 +35,7 @@ class MessageService:
 
   async def create_ai_message(self, chat_id: str, messages: List[Message]) -> Message:
     conversation = [{'role': msg['role'], 'content': msg['content']} for msg in messages]
-    ai_response = self.openai_client.generate_text_with_conversation(messages=conversation) or ''
+    ai_response = self.openai_client.generate_message_with_conversation(messages=conversation) or ''
     message_model = MessageRequest(chat_id=PyObjectId(chat_id), role=Role.ASSISTANT, content=ai_response)
     ai_message = await self.save_and_return_message(message_model) # type: ignore
     return ai_message

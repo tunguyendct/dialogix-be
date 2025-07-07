@@ -3,6 +3,7 @@ from app.core.openapi_client import AzureOpenAIClient
 from app.services.chat import ChatService
 from app.services.message import MessageService
 from app.services.user import UserService
+from app.services.ai_service import AIService
 
 
 openai_client = AzureOpenAIClient()
@@ -18,3 +19,7 @@ def get_message_service() -> MessageService:
 
 def get_user_service() -> UserService:
   return UserService(db=db.get_user_collection())
+
+
+def get_ai_service() -> AIService:
+  return AIService(client=openai_client)
