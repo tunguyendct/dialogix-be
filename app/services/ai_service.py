@@ -1,6 +1,6 @@
 import asyncio
 from datetime import datetime
-from app.schemas.chat_completion import ChatCompletionRequest, ChatCompletionResponse
+from app.models.chat_completion import ChatCompletionRequest, ChatCompletionResponse
 from app.core.openapi_client import AzureOpenAIClient
 from app.prompts.system_prompt import assistant_prompt
 

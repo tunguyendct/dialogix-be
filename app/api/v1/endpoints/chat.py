@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from typing import Annotated
 import logging
 
-from app.schemas.chat_completion import ChatCompletionRequest, ChatCompletionResponse
+from app.models.chat_completion import ChatCompletionRequest, ChatCompletionResponse
+from app.models.conversation import ConversationRequest, ConversationResponse
 from app.services.ai_service import AIService
 from app.services.chat import ChatService
 from app.models.chat import ChatRequest
@@ -50,8 +51,6 @@ async def create_chat(chat: ChatRequest, chat_service: ChatService = Depends(get
 @router.post(
     "/completions",
     response_model=ChatCompletionResponse,
-    summary="Generate AI Chat Completion",
-    description="Generate AI assistant response for user message in conversation context"
 )
 async def create_chat_completion(
     request: ChatCompletionRequest,
@@ -105,3 +104,6 @@ async def create_chat_completion(
             status_code=500,
             detail="Internal server error during AI completion generation"
         )
+
+
+@router.post('/conversations', response_model=)
