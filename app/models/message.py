@@ -4,11 +4,17 @@ from enum import Enum
 
 
 class Role(str, Enum):
+  SYSTEM = 'system'
   USER = 'user'
   ASSISTANT = 'assistant'
 
 
 class MessageRequest(BaseModel):
+  role: Role
+  content: str
+
+
+class AIMessage(BaseModel):
   role: Role
   content: str
 

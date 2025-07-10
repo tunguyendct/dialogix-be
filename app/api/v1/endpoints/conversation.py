@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import Annotated
 import logging
-from app.models.conversation import Conversation, ConversationRequest, ConversationResponse
+from app.models.conversation import ConversationRequest, ConversationResponse
 from app.services.conversation import ConversationService
 from app.services.ai_service import AIService
 from app.api.deps import get_ai_service, get_conversation_service
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 @router.post(
-    "/",
+    "/message",
     response_model=ConversationRequest,
 )
 async def create_conversation_message(
@@ -53,9 +53,14 @@ async def create_conversation_message(
             f"Processing completion for conversation: {request.conversation_id}"
         )
         
-        conversation = ''
+        conversation = await conversation_service.get_conversation_by_id(conversation_id=request.conversation_id)
 
-        response = await ai_service.generate_completion(request)
+        if conversation is None:
+            conversation = await conversation_service.create_conversation(conversation_id=request.conversation_id, title='Title')
+        
+        conversation_history = conversation.messages
+
+        response = await ai_service.generate_completion(request, conversation_history)
         
         logger.info(
             f"Completion generated successfully: {response.message_id}"

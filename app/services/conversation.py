@@ -1,4 +1,5 @@
 from app.models.conversation import Conversation
+import datetime
 
 
 class ConversationService:
@@ -19,6 +20,18 @@ class ConversationService:
         # In production, validate against database
         return len(conversation_id) > 0
     
-    async def get_conversation_by_id(self, conversation_id: str) -> Conversation:
-        conversation = self.db.find_one({'conversation_id': conversation_id})
+
+    async def create_conversation(self, conversation_id: str, title: str) -> Conversation:
+        conversation = await self.db.insert_one({
+            'conversation_id': conversation_id,
+            'title': title,
+            'created_at': datetime.datetime.now(), 
+            'messages': []
+        })
+
+        return conversation
+
+
+    async def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
+        conversation = await self.db.find_one({'conversation_id': conversation_id})
         return conversation
