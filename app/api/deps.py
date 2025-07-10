@@ -1,16 +1,12 @@
 from database.mongo import db
 from app.core.openapi_client import AzureOpenAIClient
-from app.services.chat import ChatService
 from app.services.message import MessageService
 from app.services.user import UserService
 from app.services.ai_service import AIService
+from app.services.conversation import ConversationService
 
 
 openai_client = AzureOpenAIClient()
-
-
-def get_chat_service() -> ChatService:
-  return ChatService(db=db.get_chat_collection())
 
 
 def get_message_service() -> MessageService:
@@ -23,3 +19,7 @@ def get_user_service() -> UserService:
 
 def get_ai_service() -> AIService:
   return AIService(client=openai_client)
+
+
+def get_conversation_service() -> ConversationService:
+  return ConversationService(db=db.get_conversation_collection())

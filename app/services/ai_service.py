@@ -1,6 +1,6 @@
 import asyncio
-from datetime import datetime
-from app.models.chat_completion import ChatCompletionRequest, ChatCompletionResponse
+from datetime import datetime, timezone
+from app.models.conversation import ConversationRequest, ConversationResponse
 from app.core.openapi_client import AzureOpenAIClient
 from app.prompts.system_prompt import assistant_prompt
 
@@ -21,13 +21,13 @@ class AIService:
     
     async def generate_completion(
         self, 
-        request: ChatCompletionRequest
-    ) -> ChatCompletionResponse:
+        request: ConversationRequest
+    ) -> ConversationResponse:
         """
         Generate AI completion response for user message.
         
         Args:
-            request: Chat completion request with conversation_id and message
+            request: Conversation request with conversation_id and message
             
         Returns:
             ChatCompletionResponse with AI generated response
@@ -41,7 +41,7 @@ class AIService:
         # Generate unique message ID
         message_id = self._generate_message_id()
         
-        return ChatCompletionResponse(
+        return ConversationResponse(
             message=ai_response,
             message_id=message_id,
             conversation_id=request.conversation_id,
@@ -89,19 +89,6 @@ class AIService:
     
     def _generate_message_id(self) -> str:
         """Generate unique message identifier."""
-        timestamp = int(datetime.utcnow().timestamp() * 1000)
+        timestamp = int(datetime.now(timezone.utc).timestamp() * 1000)
         return f"msg-{timestamp}"
     
-    async def validate_conversation(self, conversation_id: str) -> bool:
-        """
-        Validate if conversation exists and is accessible.
-        
-        Args:
-            conversation_id: Conversation session identifier
-            
-        Returns:
-            Boolean indicating if conversation is valid
-        """
-        # For now, accept all conversation IDs
-        # In production, validate against database
-        return len(conversation_id) > 0
