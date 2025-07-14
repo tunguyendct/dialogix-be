@@ -1,5 +1,6 @@
 from app.models.conversation import Conversation
 import datetime
+from typing import List
 
 
 class ConversationService:
@@ -21,17 +22,17 @@ class ConversationService:
         return len(conversation_id) > 0
     
 
-    async def create_conversation(self, conversation_id: str, title: str) -> Conversation:
+    async def create_conversation(self, conversation_id: str, title: str, messages: List = []) -> Conversation:
         conversation = await self.db.insert_one({
-            'conversation_id': conversation_id,
+            '_id': conversation_id,
             'title': title,
-            'created_at': datetime.datetime.now(), 
-            'messages': []
+            'createdAt': datetime.datetime.now(), 
+            'messages': messages
         })
 
         return conversation
 
 
     async def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
-        conversation = await self.db.find_one({'conversation_id': conversation_id})
+        conversation = await self.db.find_one({'_id': conversation_id})
         return conversation
