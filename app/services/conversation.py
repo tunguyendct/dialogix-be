@@ -1,6 +1,7 @@
-from app.models.conversation import Conversation
 import datetime
 from typing import List
+from app.models.conversation import Conversation
+from app.dtos.conversation.conversation_dto import ConversationDTO
 
 
 class ConversationService:
@@ -33,6 +34,10 @@ class ConversationService:
         return conversation
 
 
-    async def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
+    async def get_conversation_by_id(self, conversation_id: str) -> ConversationDTO | None:
         conversation = await self.db.find_one({'_id': conversation_id})
-        return conversation
+        
+        if not conversation:
+            return None
+
+        return ConversationDTO.from_dict(conversation)

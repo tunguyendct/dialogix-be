@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from typing import Annotated
 import logging
-from app.models.conversation import ConversationRequest, ConversationResponse, Conversation
+from app.models.conversation import ConversationRequest, ConversationResponse
 from app.services.conversation import ConversationService
+from app.dtos.conversation.conversation_dto import ConversationDTO
 from app.services.ai_service import AIService
 from app.api.deps import get_ai_service, get_conversation_service
 
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 async def get_conversation(
     conversation_id: str,
     conversation_service: ConversationService = Depends(get_conversation_service)
-) -> Conversation:
+) -> ConversationDTO:
     try:
         # Validate conversation
         is_valid_conversation = await conversation_service.validate_conversation(
