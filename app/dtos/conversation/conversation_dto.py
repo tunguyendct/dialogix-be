@@ -1,8 +1,7 @@
-from typing import List, Any, Dict, Optional
+from typing import List, Any, Dict
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from app.dtos.base_dto import BaseDTO
-from app.dtos.message.message_dto import MessageDTO
 
 
 class ConversationDTO(BaseModel, BaseDTO['ConversationDTO']):

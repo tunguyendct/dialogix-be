@@ -17,6 +17,10 @@ class ConversationRequest(BaseModel):
         description="User message content",
         examples=["Hi"]
     )
+    timestamp: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        description="Message timestamp"
+    )
 
 class ConversationResponse(BaseModel):
     """Schema for chat completion response."""

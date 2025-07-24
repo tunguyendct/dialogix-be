@@ -1,10 +1,9 @@
 import asyncio
-from typing import List
+from typing import List, Dict, Any
 from datetime import datetime, timezone
 from app.models.conversation import ConversationRequest, ConversationResponse
 from app.core.openapi_client import AzureOpenAIClient
 from app.prompts.system_prompt import assistant_prompt
-from app.models.message import Message
 
 class AIService:
     """Service layer for AI completion operations."""
@@ -24,7 +23,7 @@ class AIService:
     async def generate_completion(
         self, 
         request: ConversationRequest,
-        conversation_history: List[Message]
+        conversation_history: List[Dict[str, Any]]
     ) -> ConversationResponse:
         """
         Generate AI completion response for user message.
@@ -52,7 +51,7 @@ class AIService:
                 }
             ]
         else:
-            messages = [{'role': msg.role, 'content': msg.content} for msg in conversation_history]
+            messages = [{'role': msg['role'], 'content': msg['content']} for msg in conversation_history]
 
         messages.append(user_message)
         

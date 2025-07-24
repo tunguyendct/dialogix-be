@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from typing import Annotated
 import logging
+import uuid
 from app.models.conversation import ConversationRequest, ConversationResponse
 from app.services.conversation import ConversationService
 from app.dtos.conversation.conversation_dto import ConversationDTO
@@ -105,6 +106,24 @@ async def create_conversation_message(
         conversation_history = conversation.messages
 
         response = await ai_service.generate_completion(request, conversation_history)
+
+        await conversation_service.add_messages_to_conversation(
+            conversation_id=request.conversation_id,
+            messages=[
+                {
+                    'role': 'user',
+                    'content': request.message,
+                    'id': uuid.uuid4().hex,
+                    'timestamp': request.timestamp.isoformat()
+                },
+                {
+                    'role': 'assistant',
+                    'content': response.message,
+                    'id': response.message_id,
+                    'timestamp': response.timestamp.isoformat() if response.timestamp else None
+                }
+            ]
+        )
         
         logger.info(
             f"Completion generated successfully: {response.message_id}"

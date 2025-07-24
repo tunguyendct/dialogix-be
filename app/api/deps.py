@@ -1,16 +1,11 @@
 from database.mongo import db
 from app.core.openapi_client import AzureOpenAIClient
-from app.services.message import MessageService
 from app.services.user import UserService
 from app.services.ai_service import AIService
 from app.services.conversation import ConversationService
 
 
 openai_client = AzureOpenAIClient()
-
-
-def get_message_service() -> MessageService:
-  return MessageService(db=db.get_message_collection(), client=openai_client)
 
 
 def get_user_service() -> UserService:

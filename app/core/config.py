@@ -1,5 +1,5 @@
-from typing import List, Optional
-from pydantic import Field, validator
+from typing import List
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     )
     
     # Database Configuration
-    MONGO_URL: str = Field(..., description="MongoDB connection URL")
+    MONGO_URL: str = Field(default="mongodb://localhost:27017", description="MongoDB connection URL")
     DATABASE_NAME: str = Field(default="Dialogix", description="Database name")
     
     # Collection Names
@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     MESSAGE_COLLECTION: str = Field(default="messages", description="Message collection name")
     
     # Security Configuration
-    SECRET_KEY: str = Field(..., description="JWT secret key")
+    SECRET_KEY: str = Field(default="your-secret-key-change-in-production", description="JWT secret key")
     ALGORITHM: str = Field(default="HS256", description="JWT algorithm")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=30, description="Token expiration time")
     
@@ -58,29 +58,29 @@ class Settings(BaseSettings):
         description="Log format string"
     )
     
-    @validator("ENVIRONMENT")
+    @field_validator("ENVIRONMENT")
     def validate_environment(cls, v: str) -> str:
         """Validate environment setting."""
         allowed_envs = ["development", "production", "testing"]
         if v not in allowed_envs:
             raise ValueError(f"Environment must be one of: {allowed_envs}")
         return v
-    
-    @validator("PORT")
+
+    @field_validator("PORT")
     def validate_port(cls, v: int) -> int:
         """Validate port number."""
         if not (1 <= v <= 65535):
             raise ValueError("Port must be between 1 and 65535")
         return v
     
-    @validator("MAX_MESSAGE_LENGTH")
+    @field_validator("MAX_MESSAGE_LENGTH")
     def validate_message_length(cls, v: int) -> int:
         """Validate maximum message length."""
         if v <= 0:
             raise ValueError("Maximum message length must be positive")
         return v
-    
-    @validator("AI_TEMPERATURE")
+
+    @field_validator("AI_TEMPERATURE")
     def validate_temperature(cls, v: float) -> float:
         """Validate AI temperature setting."""
         if not (0.0 <= v <= 2.0):
