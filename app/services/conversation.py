@@ -23,14 +23,23 @@ class ConversationService:
     
 
     async def create_conversation(self, conversation_id: str, title: str, messages: List = []) -> ConversationDTO:
-        conversation = await self.db.insert_one({
+        conversation_data = {
             '_id': conversation_id,
             'title': title,
             'createdAt': datetime.datetime.now(), 
             'messages': messages
-        })
-
-        return ConversationDTO.from_dict(conversation)
+        }
+        
+        # Insert the document into database
+        await self.db.insert_one(conversation_data)
+        
+        # Retrieve the inserted document to ensure we have the complete data
+        inserted_conversation = await self.db.find_one({'_id': conversation_id})
+        
+        if not inserted_conversation:
+            raise RuntimeError(f"Failed to retrieve inserted conversation: {conversation_id}")
+        
+        return ConversationDTO.from_dict(inserted_conversation)
 
 
     async def get_conversation_by_id(self, conversation_id: str) -> ConversationDTO | None:

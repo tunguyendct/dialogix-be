@@ -18,8 +18,15 @@ class ConversationDTO(BaseModel, BaseDTO['ConversationDTO']):
         if not data:
             raise ValueError('Cannot convert empty data to ConversationDTO')
     
+        conversation_id = data.get('_id')
+        if conversation_id is None:
+            raise ValueError('Conversation ID cannot be None')
+        
+        if hasattr(conversation_id, '__str__'):
+            conversation_id = str(conversation_id)
+    
         return cls(
-            id=data.get('_id', ''),
+            id=conversation_id,
             title=data.get('title', ''),
             created_at=data.get('createdAt', datetime.now()),
             messages=data.get('messages', [])
